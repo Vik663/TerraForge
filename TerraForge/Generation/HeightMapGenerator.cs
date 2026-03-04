@@ -10,11 +10,7 @@ public class HeightMapGenerator : IWorldGenerationStep
         var rnd = new Random(settings.Seed);
 
         for (var y = 0; y < world.Height; y++)
-        {
-            for (var x = 0; x < world.Width; x++)
-            {
-                world.Cells[x, y].Height = rnd.NextDouble();
-            }
-        }
+        for (var x = 0; x < world.Width; x++)
+            world.Cells[x, y].Height = rnd.NextDouble();
     }
 }

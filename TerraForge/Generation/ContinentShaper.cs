@@ -13,18 +13,16 @@ public class ContinentShaper : IWorldGenerationStep
         var maxDist = Math.Sqrt(cx * cx + cy * cy);
 
         for (var y = 0; y < world.Height; y++)
+        for (var x = 0; x < world.Width; x++)
         {
-            for (var x = 0; x < world.Width; x++)
-            {
-                var dx = x - cx;
-                var dy = y - cy;
-                var dist = Math.Sqrt(dx * dx + dy * dy);
+            var dx = x - cx;
+            var dy = y - cy;
+            var dist = Math.Sqrt(dx * dx + dy * dy);
 
-                var factor = 1.0 - (dist / maxDist);
-                factor = Math.Pow(factor, 0.6);
-                
-                world.Cells[x, y].Height *= factor;
-            }
+            var factor = 1.0 - dist / maxDist;
+            factor = Math.Pow(factor, 0.6);
+
+            world.Cells[x, y].Height *= factor;
         }
     }
 }

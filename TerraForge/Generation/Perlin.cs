@@ -11,12 +11,26 @@ public class Perlin
         _perm = _perm.Concat(_perm).ToArray();
     }
 
-    private static double Fade(double t) => t * t * t * (t * (t * 6 - 15) + 10);
-    private static double Lerp(double a, double b, double t) => a + t * (b - a);
+    private static double Fade(double t)
+    {
+        return t * t * t * (t * (t * 6 - 15) + 10);
+    }
+
+    private static double Lerp(double a, double b, double t)
+    {
+        return a + t * (b - a);
+    }
+
     private static double Grad(int hash, double x, double y)
     {
         var h = hash & 3;
-        return (h == 0 ? x : h == 1 ? -x : h == 2 ? y : -y);
+        return h switch
+        {
+            0 => x,
+            1 => -x,
+            2 => y,
+            _ => -y
+        };
     }
 
     public double Noise(double x, double y)

@@ -12,29 +12,25 @@ public class WorldSmoother(int iterations = 3) : IWorldGenerationStep
             var newHeights = new double[world.Width, world.Height];
 
             for (var y = 0; y < world.Height; y++)
+            for (var x = 0; x < world.Width; x++)
             {
-                for (var x = 0; x < world.Width; x++)
+                double sum = 0;
+                var count = 0;
+
+                for (var dy = -1; dy <= 1; dy++)
+                for (var dx = -1; dx <= 1; dx++)
                 {
-                    double sum = 0;
-                    var count = 0;
+                    var nx = x + dx;
+                    var ny = y + dy;
 
-                    for (var dy = -1; dy <= 1; dy++)
-                    {
-                        for (var dx = -1; dx <= 1; dx++)
-                        {
-                            var nx = x + dx;
-                            var ny = y + dy;
+                    if (nx < 0 || ny < 0 || nx >= world.Width || ny >= world.Height)
+                        continue;
 
-                            if (nx < 0 || ny < 0 || nx >= world.Width || ny >= world.Height)
-                                continue;
-
-                            sum += world.Cells[nx, ny].Height;
-                            count++;
-                        }
-                    }
-
-                    newHeights[x, y] = sum / count;
+                    sum += world.Cells[nx, ny].Height;
+                    count++;
                 }
+
+                newHeights[x, y] = sum / count;
             }
 
             for (var y = 0; y < world.Height; y++)

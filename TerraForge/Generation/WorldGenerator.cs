@@ -11,10 +11,7 @@ public class WorldGenerator(IEnumerable<IWorldGenerationStep> steps)
     {
         var world = new World(settings.Width, settings.Height);
 
-        foreach (var step in _steps)
-        {
-            step.Apply(world, settings);
-        }
+        foreach (var step in _steps) step.Apply(world, settings);
 
         return world;
     }

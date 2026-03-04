@@ -14,17 +14,15 @@ public static class PngRenderer
         using var canvasSmall = new SKCanvas(small);
 
         for (var y = 0; y < h; y++)
+        for (var x = 0; x < w; x++)
         {
-            for (var x = 0; x < w; x++)
-            {
-                var cell = world.Cells[x, y];
+            var cell = world.Cells[x, y];
 
-                var biomeColor = BiomeColor(cell.Biome);
-                var shaded = ApplyHeightShading(biomeColor, cell.Height);
-                var final = ApplyHillshade(world, x, y, shaded);
+            var biomeColor = BiomeColor(cell.Biome);
+            var shaded = ApplyHeightShading(biomeColor, cell.Height);
+            var final = ApplyHillshade(world, x, y, shaded);
 
-                canvasSmall.DrawPoint(x, y, final);
-            }
+            canvasSmall.DrawPoint(x, y, final);
         }
 
         using var large = new SKBitmap(w * scale, h * scale);
@@ -43,9 +41,9 @@ public static class PngRenderer
     {
         var brightness = (float)(0.7 + height * 0.6);
 
-        var r = (byte)Math.Clamp(baseColor.Red   * brightness, 0, 255);
+        var r = (byte)Math.Clamp(baseColor.Red * brightness, 0, 255);
         var g = (byte)Math.Clamp(baseColor.Green * brightness, 0, 255);
-        var b = (byte)Math.Clamp(baseColor.Blue  * brightness, 0, 255);
+        var b = (byte)Math.Clamp(baseColor.Blue * brightness, 0, 255);
 
         return new SKColor(r, g, b);
     }
@@ -68,36 +66,43 @@ public static class PngRenderer
         double lightZ = 1;
 
         var len = Math.Sqrt(lightX * lightX + lightY * lightY + lightZ * lightZ);
-        lightX /= len; lightY /= len; lightZ /= len;
+        lightX /= len;
+        lightY /= len;
+        lightZ /= len;
 
         var nx = -dx;
         var ny = -dy;
         double nz = 1;
 
         var nlen = Math.Sqrt(nx * nx + ny * ny + nz * nz);
-        nx /= nlen; ny /= nlen; nz /= nlen;
+        nx /= nlen;
+        ny /= nlen;
+        nz /= nlen;
 
         var dot = Math.Max(0.0, nx * lightX + ny * lightY + nz * lightZ);
 
         var shade = (float)(0.5 + dot * 0.5);
 
-        var r = (byte)Math.Clamp(baseColor.Red   * shade, 0, 255);
+        var r = (byte)Math.Clamp(baseColor.Red * shade, 0, 255);
         var g = (byte)Math.Clamp(baseColor.Green * shade, 0, 255);
-        var b = (byte)Math.Clamp(baseColor.Blue  * shade, 0, 255);
+        var b = (byte)Math.Clamp(baseColor.Blue * shade, 0, 255);
 
         return new SKColor(r, g, b);
     }
 
-    private static SKColor BiomeColor(Biome b) => b switch
+    private static SKColor BiomeColor(Biome b)
     {
-        Biome.Ocean     => new SKColor(30, 60, 200),
-        Biome.Beach     => new SKColor(240, 230, 140),
-        Biome.Desert    => new SKColor(237, 201, 175),
-        Biome.Savanna   => new SKColor(181, 189, 104),
-        Biome.Forest    => new SKColor(34, 139, 34),
-        Biome.Taiga     => new SKColor(0, 100, 0),
-        Biome.Hills     => new SKColor(120, 120, 120),
-        Biome.Mountains => new SKColor(220, 220, 220),
-        _               => SKColors.Magenta
-    };
+        return b switch
+        {
+            Biome.Ocean => new SKColor(30, 60, 200),
+            Biome.Beach => new SKColor(240, 230, 140),
+            Biome.Desert => new SKColor(237, 201, 175),
+            Biome.Savanna => new SKColor(181, 189, 104),
+            Biome.Forest => new SKColor(34, 139, 34),
+            Biome.Taiga => new SKColor(0, 100, 0),
+            Biome.Hills => new SKColor(120, 120, 120),
+            Biome.Mountains => new SKColor(220, 220, 220),
+            _ => SKColors.Magenta
+        };
+    }
 }
