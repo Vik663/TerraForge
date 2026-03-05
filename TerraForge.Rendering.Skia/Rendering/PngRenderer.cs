@@ -1,7 +1,7 @@
 using SkiaSharp;
 using TerraForge.Domain;
 
-namespace TerraForge.Rendering;
+namespace TerraForge.Rendering.Rendering;
 
 public static class PngRenderer
 {
@@ -9,7 +9,7 @@ public static class PngRenderer
     {
         var w = world.Width;
         var h = world.Height;
-
+        
         using var small = new SKBitmap(w, h);
         using var canvasSmall = new SKCanvas(small);
 

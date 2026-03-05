@@ -7,12 +7,12 @@ on:
     branches: [ "main" ]
 
 jobs:
-
   logic-tests:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout
+      uses: actions/checkout@v4
 
     - name: Setup .NET 10
       uses: actions/setup-dotnet@v4
@@ -60,13 +60,13 @@ jobs:
         name: TestResults
         path: TestResults
 
-
   rendering-tests:
     runs-on: windows-latest
     needs: logic-tests
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout
+      uses: actions/checkout@v4
 
     - name: Setup .NET 10
       uses: actions/setup-dotnet@v4
@@ -79,5 +79,5 @@ jobs:
     - name: Build
       run: dotnet build TerraForge.sln --configuration Release --no-restore
 
-    - name: Test (rendering)
+    - name: Test (rendering only)
       run: dotnet test TerraForge.sln --configuration Release --no-build --filter "Category=Rendering"

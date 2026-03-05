@@ -1,8 +1,9 @@
 using SkiaSharp;
 using TerraForge.Domain;
-using TerraForge.Rendering;
+using TerraForge.Rendering.Rendering;
+using Xunit;
 
-namespace TerraForge.Tests.Rendering;
+namespace TerraForge.Rendering.Skia.Tests;
 
 [Trait("Category", "Rendering")]
 public class PngRendererTests
