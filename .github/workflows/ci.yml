@@ -25,10 +25,6 @@ jobs:
     - name: Build
       run: dotnet build TerraForge.sln --configuration Release --no-restore
 
-    - name: Run analyzers
-      run: dotnet format --verify-no-changes
-      continue-on-error: true
-
     - name: Test (logic only)
       run: >
         dotnet test TerraForge.Tests
@@ -53,38 +49,27 @@ jobs:
         value=$(jq '.summary.linecoverage' CoverageReport/Summary.json)
         echo "percent=$value" >> $GITHUB_OUTPUT
 
-    - name: Create coverage badge SVG
+    - name: Prepare gh-pages folder
       run: |
+        mkdir gh-pages
+        cp -r CoverageReport gh-pages/
+        cp CoverageReport/Summary.json gh-pages/
         percent=${{ steps.coverage.outputs.percent }}
         color="red"
         if (( $(echo "$percent > 80" | bc -l) )); then color="green"; fi
         if (( $(echo "$percent > 50" | bc -l) )); then color="yellow"; fi
-
         echo "<svg xmlns='http://www.w3.org/2000/svg' width='120' height='20'>
         <rect width='60' height='20' fill='#555'/>
         <rect x='60' width='60' height='20' fill='$color'/>
         <text x='30' y='14' fill='#fff' font-family='Verdana' font-size='11' text-anchor='middle'>coverage</text>
         <text x='90' y='14' fill='#fff' font-family='Verdana' font-size='11' text-anchor='middle'>$percent%</text>
-        </svg>" > coverage-badge.svg
+        </svg>" > gh-pages/coverage-badge.svg
 
-    - name: Upload coverage artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: CoverageReport
-        path: CoverageReport
-
-    - name: Upload badge artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: CoverageBadge
-        path: coverage-badge.svg
-
-    - name: Publish coverage + badge to GitHub Pages
+    - name: Publish coverage and badge to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: .
-        destination_dir: .
+        publish_dir: ./gh-pages
         keep_files: true
 
 
