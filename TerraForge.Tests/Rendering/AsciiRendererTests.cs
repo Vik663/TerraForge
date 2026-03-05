@@ -46,10 +46,13 @@ public class AsciiRendererTests
             { Biome.Beach, Biome.Mountains }
         });
 
-        var output = CaptureOutput(() => AsciiRenderer.Render(world));
+        var capturedOutput = CaptureOutput(() => AsciiRenderer.Render(world));
 
-        const string expected = "~.\n" +
-                                "*A\n";
+        var output = Normalize(capturedOutput);
+
+        const string expected =
+            "~.\n" +
+            "*A\n";
 
         Assert.Equal(expected, output);
     }
@@ -119,4 +122,7 @@ public class AsciiRendererTests
 
         Assert.Null(ex);
     }
+    
+    private static string Normalize(string s) =>
+        s.Replace("\r\n", "\n").Replace("\r", "\n");
 }
