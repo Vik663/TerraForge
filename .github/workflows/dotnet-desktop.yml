@@ -7,12 +7,12 @@ on:
     branches: [ "main" ]
 
 jobs:
+
   logic-tests:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
     - name: Setup .NET 10
       uses: actions/setup-dotnet@v4
@@ -31,10 +31,9 @@ jobs:
 
     - name: Test (logic only)
       run: >
-        dotnet test TerraForge.sln
+        dotnet test TerraForge.Tests
         --configuration Release
         --no-build
-        --filter "Category!=Rendering"
         --collect:"XPlat Code Coverage"
         --results-directory ./TestResults
 
@@ -60,13 +59,13 @@ jobs:
         name: TestResults
         path: TestResults
 
+
   rendering-tests:
     runs-on: windows-latest
     needs: logic-tests
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
     - name: Setup .NET 10
       uses: actions/setup-dotnet@v4
@@ -79,5 +78,5 @@ jobs:
     - name: Build
       run: dotnet build TerraForge.sln --configuration Release --no-restore
 
-    - name: Test (rendering only)
-      run: dotnet test TerraForge.sln --configuration Release --no-build --filter "Category=Rendering"
+    - name: Test (rendering)
+      run: dotnet test TerraForge.Rendering.Skia.Tests --configuration Release --no-build
