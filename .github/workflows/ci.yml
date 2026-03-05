@@ -14,6 +14,14 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Cache NuGet packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+
     - name: Setup .NET 10
       uses: actions/setup-dotnet@v4
       with:
@@ -31,15 +39,84 @@ jobs:
         --configuration Release
         --no-build
         --collect:"XPlat Code Coverage"
-        --results-directory ./TestResults
+        --results-directory ./LinuxCoverage
+
+    - name: Upload Linux coverage
+      uses: actions/upload-artifact@v4
+      with:
+        name: LinuxCoverage
+        path: LinuxCoverage
+
+
+  rendering-tests:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Cache NuGet packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+
+    - name: Setup .NET 10
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 10.0.x
+
+    - name: Build only renderer tests
+      run: dotnet build TerraForge.Rendering.Skia.Tests/TerraForge.Rendering.Skia.Tests.csproj --configuration Release
+
+    - name: Test (rendering)
+      run: >
+        dotnet test TerraForge.Rendering.Skia.Tests
+        --configuration Release
+        --no-build
+        --collect:"XPlat Code Coverage"
+        --results-directory ./WinCoverage
+
+    - name: Upload Windows coverage
+      uses: actions/upload-artifact@v4
+      with:
+        name: WinCoverage
+        path: WinCoverage
+
+
+  merge-and-publish-coverage:
+    runs-on: ubuntu-latest
+    needs: [logic-tests, rendering-tests]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Cache dotnet tools
+      uses: actions/cache@v4
+      with:
+        path: ~/.dotnet/tools
+        key: ${{ runner.os }}-dotnet-tools
+
+    - name: Download Linux coverage
+      uses: actions/download-artifact@v4
+      with:
+        name: LinuxCoverage
+        path: LinuxCoverage
+
+    - name: Download Windows coverage
+      uses: actions/download-artifact@v4
+      with:
+        name: WinCoverage
+        path: WinCoverage
 
     - name: Install ReportGenerator
       run: dotnet tool install -g dotnet-reportgenerator-globaltool
 
-    - name: Generate coverage report
+    - name: Merge coverage reports
       run: |
         reportgenerator \
-          -reports:"TestResults/**/coverage.cobertura.xml" \
+          -reports:"LinuxCoverage/**/coverage.cobertura.xml;WinCoverage/**/coverage.cobertura.xml" \
           -targetdir:"CoverageReport" \
           -reporttypes:"Html;JsonSummary"
 
@@ -49,10 +126,10 @@ jobs:
         value=$(jq '.summary.linecoverage' CoverageReport/Summary.json)
         echo "percent=$value" >> $GITHUB_OUTPUT
 
-    - name: Prepare gh-pages folder
+    - name: Prepare public folder
       run: |
-        mkdir -p ./public
-        cp -r CoverageReport ./public/
+        mkdir -p public
+        cp -r CoverageReport public/
         percent=${{ steps.coverage.outputs.percent }}
         color="red"
         if (( $(echo "$percent > 80" | bc -l) )); then color="green"; fi
@@ -62,7 +139,7 @@ jobs:
         <rect x='60' width='60' height='20' fill='$color'/>
         <text x='30' y='14' fill='#fff' font-family='Verdana' font-size='11' text-anchor='middle'>coverage</text>
         <text x='90' y='14' fill='#fff' font-family='Verdana' font-size='11' text-anchor='middle'>$percent%</text>
-        </svg>" > ./public/coverage-badge.svg
+        </svg>" > public/coverage-badge.svg
 
     - name: Publish to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
@@ -71,25 +148,3 @@ jobs:
         publish_dir: ./public
         publish_branch: gh-pages
         keep_files: true
-
-
-  rendering-tests:
-    runs-on: windows-latest
-    needs: logic-tests
-
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Setup .NET 10
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 10.0.x
-
-    - name: Restore
-      run: dotnet restore TerraForge.sln
-
-    - name: Build
-      run: dotnet build TerraForge.sln --configuration Release --no-restore
-
-    - name: Test (rendering)
-      run: dotnet test TerraForge.Rendering.Skia.Tests --configuration Release --no-build
