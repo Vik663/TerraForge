@@ -1,7 +1,7 @@
 # TerraForge
 
 ![CI](https://github.com/Vik663/TerraForge/actions/workflows/ci.yml/badge.svg)
-![Coverage](coverage-badge.svg)
+![Coverage](https://vik663.github.io/TerraForge/coverage-badge.svg)
 ![License](https://img.shields.io/github/license/Vik663/TerraForge)
 ![Platform](https://img.shields.io/badge/.NET-10-blue)
 
