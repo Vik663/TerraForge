@@ -4,6 +4,7 @@ using TerraForge.Rendering;
 
 namespace TerraForge.Tests.Rendering;
 
+[Trait("Category", "Rendering")]
 public class PngRendererTests
 {
     private static World CreateWorld(int w, int h, Biome biome, double height = 0.0)
