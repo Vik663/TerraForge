@@ -51,9 +51,8 @@ jobs:
 
     - name: Prepare gh-pages folder
       run: |
-        mkdir gh-pages
-        cp -r CoverageReport gh-pages/
-        cp CoverageReport/Summary.json gh-pages/
+        mkdir -p ./public
+        cp -r CoverageReport ./public/
         percent=${{ steps.coverage.outputs.percent }}
         color="red"
         if (( $(echo "$percent > 80" | bc -l) )); then color="green"; fi
@@ -63,13 +62,14 @@ jobs:
         <rect x='60' width='60' height='20' fill='$color'/>
         <text x='30' y='14' fill='#fff' font-family='Verdana' font-size='11' text-anchor='middle'>coverage</text>
         <text x='90' y='14' fill='#fff' font-family='Verdana' font-size='11' text-anchor='middle'>$percent%</text>
-        </svg>" > gh-pages/coverage-badge.svg
+        </svg>" > ./public/coverage-badge.svg
 
-    - name: Publish coverage and badge to GitHub Pages
+    - name: Publish to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./gh-pages
+        publish_dir: ./public
+        publish_branch: gh-pages
         keep_files: true
 
 
