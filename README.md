@@ -63,7 +63,7 @@ Rendering tests are isolated because SkiaSharp relies on native libraries that a
 A full HTML coverage report is published automatically:
 
 Coverage Report:  
-https://Vik663.github.io/TerraForge/coverage/index.html
+[https://vik663.github.io/TerraForge/CoverageReport/index.html]
 
 The coverage badge at the top of this page reflects the latest results from the main branch.
 
