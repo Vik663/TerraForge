@@ -1,23 +1,23 @@
 {
   "summary": {
-    "generatedon": "2026-03-05T21:32:57Z",
-    "parser": "Cobertura",
+    "generatedon": "2026-03-05T21:36:53Z",
+    "parser": "MultiReport (2x Cobertura)",
     "assemblies": 3,
     "classes": 16,
     "files": 16,
-    "coveredlines": 172,
-    "uncoveredlines": 110,
+    "coveredlines": 232,
+    "uncoveredlines": 50,
     "coverablelines": 282,
     "totallines": 569,
-    "linecoverage": 60.9,
-    "coveredbranches": 89,
+    "linecoverage": 82.2,
+    "coveredbranches": 97,
     "totalbranches": 131,
-    "branchcoverage": 67.9,
-    "coveredmethods": 31,
-    "fullcoveredmethods": 29,
+    "branchcoverage": 74,
+    "coveredmethods": 35,
+    "fullcoveredmethods": 32,
     "totalmethods": 38,
-    "methodcoverage": 81.5,
-    "fullmethodcoverage": 76.3
+    "methodcoverage": 92.1,
+    "fullmethodcoverage": 84.2
  },
   "coverage": {
     "assemblies": [
@@ -38,7 +38,7 @@
       { "name": "TerraForge.Domain", "classes": 2, "coverage": 100, "coveredlines": 14, "coverablelines": 14, "totallines": 27, "branchcoverage": 100, "coveredbranches": 4, "totalbranches": 4, "methodcoverage": 100, "fullmethodcoverage": 100, "coveredmethods": 7, "fullcoveredmethods": 7, "totalmethods": 7, "classesinassembly": [
         { "name": "TerraForge.Domain.Cell", "coverage": 100, "coveredlines": 3, "coverablelines": 3, "totallines": 8, "branchcoverage": null, "coveredbranches": 0, "totalbranches": 0, "methodcoverage": 100, "fullmethodcoverage": 100, "coveredmethods": 3, "fullcoveredmethods": 3, "totalmethods": 3 },
         { "name": "TerraForge.Domain.World", "coverage": 100, "coveredlines": 11, "coverablelines": 11, "totallines": 19, "branchcoverage": 100, "coveredbranches": 4, "totalbranches": 4, "methodcoverage": 100, "fullmethodcoverage": 100, "coveredmethods": 4, "fullcoveredmethods": 4, "totalmethods": 4 } ] },
-      { "name": "TerraForge.Rendering.Skia", "classes": 1, "coverage": 0, "coveredlines": 0, "coverablelines": 65, "totallines": 108, "branchcoverage": 0, "coveredbranches": 0, "totalbranches": 13, "methodcoverage": 0, "fullmethodcoverage": 0, "coveredmethods": 0, "fullcoveredmethods": 0, "totalmethods": 4, "classesinassembly": [
-        { "name": "TerraForge.Rendering.Rendering.PngRenderer", "coverage": 0, "coveredlines": 0, "coverablelines": 65, "totallines": 108, "branchcoverage": 0, "coveredbranches": 0, "totalbranches": 13, "methodcoverage": 0, "fullmethodcoverage": 0, "coveredmethods": 0, "fullcoveredmethods": 0, "totalmethods": 4 } ] } ]
+      { "name": "TerraForge.Rendering.Skia", "classes": 1, "coverage": 92.3, "coveredlines": 60, "coverablelines": 65, "totallines": 108, "branchcoverage": 61.5, "coveredbranches": 8, "totalbranches": 13, "methodcoverage": 100, "fullmethodcoverage": 75, "coveredmethods": 4, "fullcoveredmethods": 3, "totalmethods": 4, "classesinassembly": [
+        { "name": "TerraForge.Rendering.Rendering.PngRenderer", "coverage": 92.3, "coveredlines": 60, "coverablelines": 65, "totallines": 108, "branchcoverage": 61.5, "coveredbranches": 8, "totalbranches": 13, "methodcoverage": 100, "fullmethodcoverage": 75, "coveredmethods": 4, "fullcoveredmethods": 3, "totalmethods": 4 } ] } ]
   }
 }

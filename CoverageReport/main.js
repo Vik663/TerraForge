@@ -313,7 +313,7 @@ var assemblies = [
   {
     "name": "TerraForge.Rendering.Skia",
     "classes": [
-      { "name": "TerraForge.Rendering.Rendering.PngRenderer", "rp": "TerraForge.Rendering.Skia_PngRenderer.html", "cl": 0, "ucl": 65, "cal": 65, "tl": 108, "cb": 0, "tb": 13, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "TerraForge.Rendering.Rendering.PngRenderer", "rp": "TerraForge.Rendering.Skia_PngRenderer.html", "cl": 60, "ucl": 5, "cal": 65, "tl": 108, "cb": 8, "tb": 13, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
     ]},
 ];
 
@@ -332,12 +332,6 @@ var riskHotspots = [
     "metrics": [
       { "value": 506, "exceeded": true },
       { "value": 22, "exceeded": true },
-    ]},
-  {
-    "assembly": "TerraForge.Rendering.Skia", "class": "TerraForge.Rendering.Rendering.PngRenderer", "reportPath": "TerraForge.Rendering.Skia_PngRenderer.html", "methodName": "BiomeColor(TerraForge.Domain.Biome)", "methodShortName": "BiomeColor(...)", "fileIndex": 0, "line": 95,
-    "metrics": [
-      { "value": 90, "exceeded": true },
-      { "value": 9, "exceeded": false },
     ]},
   {
     "assembly": "TerraForge.Core", "class": "TerraForge.Generation.ClimateBiomeAssigner", "reportPath": "TerraForge.Core_ClimateBiomeAssigner.html", "methodName": "Apply(TerraForge.Domain.World,TerraForge.Settings.WorldGenerationSettings)", "methodShortName": "Apply(...)", "fileIndex": 0, "line": 10,
