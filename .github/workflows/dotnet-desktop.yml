@@ -47,31 +47,45 @@ jobs:
           -targetdir:"CoverageReport" \
           -reporttypes:"Html;JsonSummary"
 
-    - name: Upload coverage report
+    - name: Extract coverage percent
+      id: coverage
+      run: |
+        value=$(jq '.summary.linecoverage' CoverageReport/Summary.json)
+        echo "percent=$value" >> $GITHUB_OUTPUT
+
+    - name: Create coverage badge SVG
+      run: |
+        percent=${{ steps.coverage.outputs.percent }}
+        color="red"
+        if (( $(echo "$percent > 80" | bc -l) )); then color="green"; fi
+        if (( $(echo "$percent > 50" | bc -l) )); then color="yellow"; fi
+
+        echo "<svg xmlns='http://www.w3.org/2000/svg' width='120' height='20'>
+        <rect width='60' height='20' fill='#555'/>
+        <rect x='60' width='60' height='20' fill='$color'/>
+        <text x='30' y='14' fill='#fff' font-family='Verdana' font-size='11' text-anchor='middle'>coverage</text>
+        <text x='90' y='14' fill='#fff' font-family='Verdana' font-size='11' text-anchor='middle'>$percent%</text>
+        </svg>" > coverage-badge.svg
+
+    - name: Upload coverage artifacts
       uses: actions/upload-artifact@v4
       with:
         name: CoverageReport
         path: CoverageReport
 
-    - name: Upload test results
-      uses: actions/upload-artifact@v4
-      with:
-        name: TestResults
-        path: TestResults
-
-    - name: Generate coverage badge
-      uses: action-badges/core@v1
-      with:
-        label: coverage
-        message: ${{ fromJson(steps.coverage.outputs.summary).coverage }}
-        color: green
-        path: coverage-badge.svg
-
-    - name: Upload coverage badge
+    - name: Upload badge artifact
       uses: actions/upload-artifact@v4
       with:
         name: CoverageBadge
         path: coverage-badge.svg
+
+    - name: Publish coverage + badge to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: .
+        destination_dir: .
+        keep_files: true
 
 
   rendering-tests:
