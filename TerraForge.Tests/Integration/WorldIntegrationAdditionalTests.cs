@@ -91,7 +91,7 @@ public class WorldIntegrationAdditionalTests
 
         Console.SetOut(original);
 
-        var output = sw.ToString().Replace("\n", "");
+        var output = Normalize(sw.ToString()).Replace("\n", "");
 
         Assert.Equal(5 * 3, output.Length);
     }
@@ -153,4 +153,7 @@ public class WorldIntegrationAdditionalTests
         Assert.Equal(5, world.Width);
         Assert.Equal(12, world.Height);
     }
+    
+    private static string Normalize(string s) =>
+        s.Replace("\r\n", "\n").Replace("\r", "\n");
 }

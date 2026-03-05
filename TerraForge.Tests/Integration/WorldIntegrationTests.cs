@@ -99,11 +99,11 @@ public class WorldIntegrationTests
 
         Console.SetOut(original);
 
-        var output = sw.ToString();
+        var output = Normalize(sw.ToString());
 
         Assert.Equal(5, output.Split('\n', StringSplitOptions.RemoveEmptyEntries).Length);
     }
-
+    
     [Fact]
     public void PngRenderer_Can_Render_FullPipeline_World()
     {
@@ -140,4 +140,7 @@ public class WorldIntegrationTests
 
         File.Delete(path);
     }
+    
+    private static string Normalize(string s) =>
+        s.Replace("\r\n", "\n").Replace("\r", "\n");
 }
