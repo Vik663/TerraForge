@@ -73,14 +73,7 @@ jobs:
       run: dotnet build TerraForge.Rendering.Skia.Tests/TerraForge.Rendering.Skia.Tests.csproj --configuration Release
 
     - name: Test (rendering, Coverlet)
-      run: |
-        mkdir -p WinCoverage
-        dotnet test TerraForge.Rendering.Skia.Tests \
-          --configuration Release \
-          --no-build \
-          /p:CollectCoverage=true \
-          /p:CoverletOutputFormat=cobertura \
-          /p:CoverletOutput=./WinCoverage/coverage.xml
+      run: dotnet test TerraForge.Rendering.Skia.Tests --configuration Release --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=./WinCoverage/coverage.xml
 
     - name: Upload Windows coverage
       uses: actions/upload-artifact@v4
