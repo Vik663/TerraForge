@@ -113,7 +113,7 @@ jobs:
     - name: Install ReportGenerator
       run: dotnet tool install -g dotnet-reportgenerator-globaltool
 
-    - name: Merge coverage reports
+    - name: Merge coverage reports (HTML + Summary)
       run: |
         reportgenerator \
           -reports:"LinuxCoverage/**/coverage.cobertura.xml;WinCoverage/**/coverage.cobertura.xml" \
@@ -164,13 +164,13 @@ jobs:
       with:
         dotnet-version: 10.0.x
 
-    - name: Download merged coverage
+    - name: Download Linux coverage
       uses: actions/download-artifact@v4
       with:
         name: LinuxCoverage
         path: LinuxCoverage
 
-    - name: Download merged coverage (Windows)
+    - name: Download Windows coverage
       uses: actions/download-artifact@v4
       with:
         name: WinCoverage
@@ -179,12 +179,12 @@ jobs:
     - name: Install ReportGenerator
       run: dotnet tool install -g dotnet-reportgenerator-globaltool
 
-    - name: Merge coverage for Sonar
+    - name: Merge coverage for Sonar (OpenCover)
       run: |
         reportgenerator \
           -reports:"LinuxCoverage/**/coverage.cobertura.xml;WinCoverage/**/coverage.cobertura.xml" \
           -targetdir:"SonarCoverage" \
-          -reporttypes:"Cobertura"
+          -reporttypes:"OpenCover"
 
     - name: SonarCloud Scan
       uses: SonarSource/sonarcloud-github-action@v2
@@ -195,5 +195,5 @@ jobs:
           -Dsonar.projectKey=Vik663_TerraForge
           -Dsonar.organization=vik663
           -Dsonar.host.url=https://sonarcloud.io
-          -Dsonar.cs.opencover.reportsPaths=SonarCoverage/Cobertura.xml
+          -Dsonar.cs.opencover.reportsPaths=SonarCoverage/OpenCover.xml
           -Dsonar.coverage.exclusions=**/Program.cs
