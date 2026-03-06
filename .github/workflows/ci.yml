@@ -19,12 +19,21 @@ jobs:
       with:
         dotnet-version: 10.0.x
 
-    - name: Run logic tests with Coverlet
+    - name: Debug test discovery
+      run: |
+        echo "Listing repo:"
+        ls -R .
+        echo "Listing TerraForge folder:"
+        ls -R TerraForge
+
+    - name: Run tests without coverage
+      run: dotnet test TerraForge/TerraForge.Tests --configuration Release --verbosity normal
+
+    - name: Run tests with coverage
       run: |
         mkdir -p LinuxCoverage
-        dotnet test TerraForge.Tests \
+        dotnet test TerraForge/TerraForge.Tests \
           --configuration Release \
-          --no-build \
           /p:CollectCoverage=true \
           /p:CoverletOutputFormat=cobertura \
           /p:CoverletOutput=$GITHUB_WORKSPACE/LinuxCoverage/coverage.xml
@@ -54,12 +63,14 @@ jobs:
       with:
         dotnet-version: 10.0.x
 
-    - name: Run rendering tests with Coverlet
+    - name: Run rendering tests without coverage
+      run: dotnet test TerraForge/TerraForge.Rendering.Skia.Tests --configuration Release --verbosity normal
+
+    - name: Run rendering tests with coverage
       run: |
         New-Item -ItemType Directory -Force -Path "$env:GITHUB_WORKSPACE\WinCoverage" | Out-Null
-        dotnet test TerraForge.Rendering.Skia.Tests `
+        dotnet test TerraForge/TerraForge.Rendering.Skia.Tests `
           --configuration Release `
-          --no-build `
           /p:CollectCoverage=true `
           /p:CoverletOutputFormat=cobertura `
           /p:CoverletOutput="$env:GITHUB_WORKSPACE\WinCoverage\coverage.xml"
