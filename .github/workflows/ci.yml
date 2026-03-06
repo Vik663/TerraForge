@@ -96,7 +96,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ~/.dotnet/tools
-        key: ${{ runner.os }}-dotnet-tools
+        key: ${{ runner.os }}-dotnet-tools }}
 
     - name: Download Linux coverage
       uses: actions/download-artifact@v4
@@ -148,3 +148,52 @@ jobs:
         publish_dir: ./public
         publish_branch: gh-pages
         keep_files: true
+
+
+  sonarcloud:
+    runs-on: ubuntu-latest
+    needs: merge-and-publish-coverage
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET 10
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 10.0.x
+
+    - name: Download merged coverage
+      uses: actions/download-artifact@v4
+      with:
+        name: LinuxCoverage
+        path: LinuxCoverage
+
+    - name: Download merged coverage (Windows)
+      uses: actions/download-artifact@v4
+      with:
+        name: WinCoverage
+        path: WinCoverage
+
+    - name: Install ReportGenerator
+      run: dotnet tool install -g dotnet-reportgenerator-globaltool
+
+    - name: Merge coverage for Sonar
+      run: |
+        reportgenerator \
+          -reports:"LinuxCoverage/**/coverage.cobertura.xml;WinCoverage/**/coverage.cobertura.xml" \
+          -targetdir:"SonarCoverage" \
+          -reporttypes:"Cobertura"
+
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@v2
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      with:
+        args: >
+          -Dsonar.projectKey=Vik663_TerraForge
+          -Dsonar.organization=vik663
+          -Dsonar.host.url=https://sonarcloud.io
+          -Dsonar.cs.opencover.reportsPaths=SonarCoverage/Cobertura.xml
+          -Dsonar.coverage.exclusions=**/Program.cs
