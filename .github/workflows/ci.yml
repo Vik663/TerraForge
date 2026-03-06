@@ -1,11 +1,14 @@
 name: TerraForge Coverage Debug
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
 
-  logic-tests:
+  linux-coverage:
     runs-on: ubuntu-latest
 
     steps:
@@ -40,7 +43,7 @@ jobs:
         path: LinuxCoverage
 
 
-  rendering-tests:
+  windows-coverage:
     runs-on: windows-latest
 
     steps:
