@@ -4,6 +4,7 @@
 ![Coverage](https://vik663.github.io/TerraForge/coverage-badge.svg)
 ![License](https://img.shields.io/github/license/Vik663/TerraForge)
 ![Platform](https://img.shields.io/badge/.NET-10-blue)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Vik663_TerraForge&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Vik663_TerraForge)
 
 TerraForge is a modular terrain generation toolkit built on .NET. It focuses on predictable world generation, clear separation of responsibilities, and a structure that keeps the codebase easy to test and extend. Core logic stays lightweight and platform-independent, while rendering and native dependencies are isolated in their own modules.
 
