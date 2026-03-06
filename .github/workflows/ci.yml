@@ -186,6 +186,13 @@ jobs:
           -targetdir:"SonarCoverage" \
           -reporttypes:"OpenCover"
 
+    - name: Debug OpenCover file
+      run: |
+        echo "Listing SonarCoverage directory:"
+        ls -l SonarCoverage
+        echo "First 50 lines of OpenCover.xml:"
+        head -n 50 SonarCoverage/OpenCover.xml
+
     - name: SonarCloud Scan
       uses: SonarSource/sonarcloud-github-action@v2
       env:
