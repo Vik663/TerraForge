@@ -1,10 +1,7 @@
-name: TerraForge CI
+name: TerraForge Coverage Debug
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
 
@@ -14,34 +11,27 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Cache NuGet packages
-      uses: actions/cache@v4
-      with:
-        path: ~/.nuget/packages
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
-        restore-keys: |
-          ${{ runner.os }}-nuget-
-
-    - name: Setup .NET 10
+    - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 10.0.x
 
-    - name: Restore
-      run: dotnet restore TerraForge.sln
-
-    - name: Build
-      run: dotnet build TerraForge.sln --configuration Release --no-restore
-
-    - name: Test (logic only, Coverlet)
+    - name: Run logic tests with Coverlet
       run: |
-        mkdir -p $GITHUB_WORKSPACE/LinuxCoverage
+        mkdir -p LinuxCoverage
         dotnet test TerraForge.Tests \
           --configuration Release \
           --no-build \
           /p:CollectCoverage=true \
           /p:CoverletOutputFormat=cobertura \
           /p:CoverletOutput=$GITHUB_WORKSPACE/LinuxCoverage/coverage.xml
+
+    - name: Show LinuxCoverage contents
+      run: |
+        echo "LinuxCoverage directory:"
+        ls -R LinuxCoverage || true
+        echo "First 20 lines of coverage.xml:"
+        head -n 20 LinuxCoverage/coverage.xml || true
 
     - name: Upload Linux coverage
       uses: actions/upload-artifact@v4
@@ -56,23 +46,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Cache NuGet packages
-      uses: actions/cache@v4
-      with:
-        path: ~/.nuget/packages
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
-        restore-keys: |
-          ${{ runner.os }}-nuget-
-
-    - name: Setup .NET 10
+    - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 10.0.x
 
-    - name: Build only renderer tests
-      run: dotnet build TerraForge.Rendering.Skia.Tests/TerraForge.Rendering.Skia.Tests.csproj --configuration Release
-
-    - name: Test (rendering, Coverlet)
+    - name: Run rendering tests with Coverlet
       run: |
         New-Item -ItemType Directory -Force -Path "$env:GITHUB_WORKSPACE\WinCoverage" | Out-Null
         dotnet test TerraForge.Rendering.Skia.Tests `
@@ -82,129 +61,15 @@ jobs:
           /p:CoverletOutputFormat=cobertura `
           /p:CoverletOutput="$env:GITHUB_WORKSPACE\WinCoverage\coverage.xml"
 
+    - name: Show WinCoverage contents
+      run: |
+        Write-Host "WinCoverage directory:"
+        Get-ChildItem WinCoverage -Recurse
+        Write-Host "First 20 lines of coverage.xml:"
+        Get-Content WinCoverage/coverage.xml -TotalCount 20
+
     - name: Upload Windows coverage
       uses: actions/upload-artifact@v4
       with:
         name: WinCoverage
         path: WinCoverage
-
-
-  merge-and-publish-coverage:
-    runs-on: ubuntu-latest
-    needs: [logic-tests, rendering-tests]
-
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Cache dotnet tools
-      uses: actions/cache@v4
-      with:
-        path: ~/.dotnet/tools
-        key: ${{ runner.os }}-dotnet-tools }}
-
-    - name: Download Linux coverage
-      uses: actions/download-artifact@v4
-      with:
-        name: LinuxCoverage
-        path: LinuxCoverage
-
-    - name: Download Windows coverage
-      uses: actions/download-artifact@v4
-      with:
-        name: WinCoverage
-        path: WinCoverage
-
-    - name: Install ReportGenerator
-      run: dotnet tool install -g dotnet-reportgenerator-globaltool
-
-    - name: Merge coverage reports (HTML + Summary)
-      run: |
-        reportgenerator \
-          -reports:"LinuxCoverage/coverage.xml;WinCoverage/coverage.xml" \
-          -targetdir:"CoverageReport" \
-          -reporttypes:"Html;JsonSummary"
-
-    - name: Extract coverage percent
-      id: coverage
-      run: |
-        value=$(jq '.summary.linecoverage' CoverageReport/Summary.json)
-        echo "percent=$value" >> $GITHUB_OUTPUT
-
-    - name: Prepare public folder
-      run: |
-        mkdir -p public
-        cp -r CoverageReport public/
-        percent=${{ steps.coverage.outputs.percent }}
-        color="red"
-        if (( $(echo "$percent > 80" | bc -l) )); then color="green"; fi
-        if (( $(echo "$percent > 50" | bc -l) )); then color="yellow"; fi
-        echo "<svg xmlns='http://www.w3.org/2000/svg' width='120' height='20'>
-        <rect width='60' height='20' fill='#555'/>
-        <rect x='60' width='60' height='20' fill='$color'/>
-        <text x='30' y='14' fill='#fff' font-family='Verdana' font-size='11' text-anchor='middle'>coverage</text>
-        <text x='90' y='14' fill='#fff' font-family='Verdana' font-size='11' text-anchor='middle'>$percent%</text>
-        </svg>" > public/coverage-badge.svg
-
-    - name: Publish to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./public
-        publish_branch: gh-pages
-        keep_files: true
-
-
-  sonarcloud:
-    runs-on: ubuntu-latest
-    needs: merge-and-publish-coverage
-
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-
-    - name: Setup .NET 10
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 10.0.x
-
-    - name: Download Linux coverage
-      uses: actions/download-artifact@v4
-      with:
-        name: LinuxCoverage
-        path: LinuxCoverage
-
-    - name: Download Windows coverage
-      uses: actions/download-artifact@v4
-      with:
-        name: WinCoverage
-        path: WinCoverage
-
-    - name: Install ReportGenerator
-      run: dotnet tool install -g dotnet-reportgenerator-globaltool
-
-    - name: Merge coverage for Sonar (OpenCover)
-      run: |
-        reportgenerator \
-          -reports:"LinuxCoverage/coverage.xml;WinCoverage/coverage.xml" \
-          -targetdir:"SonarCoverage" \
-          -reporttypes:"OpenCover"
-
-    - name: Debug OpenCover file
-      run: |
-        echo "Listing SonarCoverage directory:"
-        ls -l SonarCoverage
-        echo "First 50 lines of OpenCover.xml:"
-        head -n 50 SonarCoverage/OpenCover.xml || true
-
-    - name: SonarCloud Scan
-      uses: SonarSource/sonarcloud-github-action@v2
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      with:
-        args: >
-          -Dsonar.projectKey=Vik663_TerraForge
-          -Dsonar.organization=vik663
-          -Dsonar.host.url=https://sonarcloud.io
-          -Dsonar.cs.opencover.reportsPaths=SonarCoverage/OpenCover.xml
-          -Dsonar.coverage.exclusions=**/Program.cs
