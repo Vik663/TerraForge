@@ -15,7 +15,9 @@ public class AsciiRendererTests
         for (var y = 0; y < height; y++)
         {
             for (var x = 0; x < width; x++)
+            {
                 world.Cells[x, y].Biome = biomes[y, x];
+            }
         }
 
         return world;
@@ -45,7 +47,6 @@ public class AsciiRendererTests
     [Fact]
     public void Render_Prints_Correct_Symbols()
     {
-        // biomes[y, x]
         var world = CreateWorld(new[,]
         {
             { Biome.Ocean, Biome.Forest },

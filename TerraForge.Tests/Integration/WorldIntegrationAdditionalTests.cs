@@ -27,10 +27,12 @@ public class WorldIntegrationAdditionalTests
         var world = GenerateFull(30, 30, 123);
 
         for (var y = 1; y < world.Height; y++)
-        for (var x = 1; x < world.Width; x++)
         {
-            var diff = Math.Abs(world.Cells[x, y].Height - world.Cells[x - 1, y - 1].Height);
-            Assert.True(diff < 0.5);
+            for (var x = 1; x < world.Width; x++)
+            {
+                var diff = Math.Abs(world.Cells[x, y].Height - world.Cells[x - 1, y - 1].Height);
+                Assert.True(diff < 0.5);
+            }
         }
     }
 
@@ -40,10 +42,12 @@ public class WorldIntegrationAdditionalTests
         var world = GenerateFull(30, 30, 123);
 
         for (var y = 1; y < world.Height; y++)
-        for (var x = 1; x < world.Width; x++)
         {
-            var diff = Math.Abs(world.Cells[x, y].Moisture - world.Cells[x - 1, y - 1].Moisture);
-            Assert.True(diff < 0.5);
+            for (var x = 1; x < world.Width; x++)
+            {
+                var diff = Math.Abs(world.Cells[x, y].Moisture - world.Cells[x - 1, y - 1].Moisture);
+                Assert.True(diff < 0.5);
+            }
         }
     }
 
