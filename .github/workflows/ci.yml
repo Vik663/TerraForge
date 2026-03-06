@@ -33,12 +33,14 @@ jobs:
     - name: Build
       run: dotnet build TerraForge.sln --configuration Release --no-restore
 
-    - name: Test (logic only)
+    - name: Test (logic only, Coverlet)
       run: >
         dotnet test TerraForge.Tests
         --configuration Release
         --no-build
-        --collect:"XPlat Code Coverage"
+        /p:CollectCoverage=true
+        /p:CoverletOutputFormat=cobertura
+        /p:CoverletOutput=coverage.xml
         --results-directory ./LinuxCoverage
 
     - name: Upload Linux coverage
@@ -70,12 +72,14 @@ jobs:
     - name: Build only renderer tests
       run: dotnet build TerraForge.Rendering.Skia.Tests/TerraForge.Rendering.Skia.Tests.csproj --configuration Release
 
-    - name: Test (rendering)
+    - name: Test (rendering, Coverlet)
       run: >
         dotnet test TerraForge.Rendering.Skia.Tests
         --configuration Release
         --no-build
-        --collect:"XPlat Code Coverage"
+        /p:CollectCoverage=true
+        /p:CoverletOutputFormat=cobertura
+        /p:CoverletOutput=coverage.xml
         --results-directory ./WinCoverage
 
     - name: Upload Windows coverage
@@ -116,7 +120,7 @@ jobs:
     - name: Merge coverage reports (HTML + Summary)
       run: |
         reportgenerator \
-          -reports:"LinuxCoverage/**/coverage.cobertura.xml;WinCoverage/**/coverage.cobertura.xml" \
+          -reports:"LinuxCoverage/**/coverage.xml;WinCoverage/**/coverage.xml" \
           -targetdir:"CoverageReport" \
           -reporttypes:"Html;JsonSummary"
 
@@ -182,7 +186,7 @@ jobs:
     - name: Merge coverage for Sonar (OpenCover)
       run: |
         reportgenerator \
-          -reports:"LinuxCoverage/**/coverage.cobertura.xml;WinCoverage/**/coverage.cobertura.xml" \
+          -reports:"LinuxCoverage/**/coverage.xml;WinCoverage/**/coverage.xml" \
           -targetdir:"SonarCoverage" \
           -reporttypes:"OpenCover"
 
@@ -191,7 +195,7 @@ jobs:
         echo "Listing SonarCoverage directory:"
         ls -l SonarCoverage
         echo "First 50 lines of OpenCover.xml:"
-        head -n 50 SonarCoverage/OpenCover.xml
+        head -n 50 SonarCoverage/OpenCover.xml || true
 
     - name: SonarCloud Scan
       uses: SonarSource/sonarcloud-github-action@v2
