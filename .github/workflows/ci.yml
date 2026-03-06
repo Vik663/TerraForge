@@ -35,13 +35,13 @@ jobs:
 
     - name: Test (logic only, Coverlet)
       run: |
-        mkdir -p LinuxCoverage
+        mkdir -p $GITHUB_WORKSPACE/LinuxCoverage
         dotnet test TerraForge.Tests \
           --configuration Release \
           --no-build \
           /p:CollectCoverage=true \
           /p:CoverletOutputFormat=cobertura \
-          /p:CoverletOutput=./LinuxCoverage/coverage.xml
+          /p:CoverletOutput=$GITHUB_WORKSPACE/LinuxCoverage/coverage.xml
 
     - name: Upload Linux coverage
       uses: actions/upload-artifact@v4
@@ -73,7 +73,14 @@ jobs:
       run: dotnet build TerraForge.Rendering.Skia.Tests/TerraForge.Rendering.Skia.Tests.csproj --configuration Release
 
     - name: Test (rendering, Coverlet)
-      run: dotnet test TerraForge.Rendering.Skia.Tests --configuration Release --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=./WinCoverage/coverage.xml
+      run: |
+        New-Item -ItemType Directory -Force -Path "$env:GITHUB_WORKSPACE\WinCoverage" | Out-Null
+        dotnet test TerraForge.Rendering.Skia.Tests `
+          --configuration Release `
+          --no-build `
+          /p:CollectCoverage=true `
+          /p:CoverletOutputFormat=cobertura `
+          /p:CoverletOutput="$env:GITHUB_WORKSPACE\WinCoverage\coverage.xml"
 
     - name: Upload Windows coverage
       uses: actions/upload-artifact@v4
