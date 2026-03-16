@@ -134,7 +134,7 @@ jobs:
         color="red"
         if (( $(echo "$percent > 80" | bc -l) )); then color="green"; fi
         if (( $(echo "$percent > 50" | bc -l) )); then color="yellow"; fi
-        echo "<svg xmlns='https://www.w3.org/2000/svg' width='120' height='20'>
+        echo "<svg xmlns='http://www.w3.org/2000/svg' width='120' height='20'>
         <rect width='60' height='20' fill='#555'/>
         <rect x='60' width='60' height='20' fill='$color'/>
         <text x='30' y='14' fill='#fff' font-family='Verdana' font-size='11' text-anchor='middle'>coverage</text>
