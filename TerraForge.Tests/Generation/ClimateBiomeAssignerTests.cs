@@ -11,6 +11,7 @@ public class ClimateBiomeAssignerTests
         var world = new World(1, 1);
         world.Cells[0, 0].Height = height;
         world.Cells[0, 0].Moisture = moisture;
+        world.Cells[0, 0].Temperature = 0.5;
         return world;
     }
 

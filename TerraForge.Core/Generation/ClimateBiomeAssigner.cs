@@ -13,6 +13,20 @@ public class ClimateBiomeAssigner : IWorldGenerationStep
             var cell = world.Cells[x, y];
             var h = cell.Height;
             var m = cell.Moisture;
+            var t = cell.Temperature;
+            
+            switch (t)
+            {
+                case < 0.15:
+                    cell.Biome = Biome.Snow;
+                    continue;
+                case < 0.30:
+                    cell.Biome = Biome.Taiga;
+                    continue;
+                case > 0.85 when h < 0.6:
+                    cell.Biome = Biome.Desert;
+                    continue;
+            }
 
             switch (h)
             {
@@ -21,6 +35,10 @@ public class ClimateBiomeAssigner : IWorldGenerationStep
                     continue;
                 case < 0.35:
                     cell.Biome = Biome.Beach;
+                    continue;
+                
+                case < 0.6 when t < 0.4:
+                    cell.Biome = Biome.Taiga;
                     continue;
                 case < 0.6:
                     cell.Biome = m switch
@@ -31,7 +49,7 @@ public class ClimateBiomeAssigner : IWorldGenerationStep
                     };
                     continue;
                 case < 0.8:
-                    cell.Biome = m < 0.4 ? Biome.Hills : Biome.Taiga;
+                    cell.Biome = t < 0.4 ? Biome.Taiga : Biome.Hills;
                     continue;
                 default:
                     cell.Biome = Biome.Mountains;

@@ -16,7 +16,8 @@ public class BiomeTests
             Biome.Forest,
             Biome.Taiga,
             Biome.Hills,
-            Biome.Mountains
+            Biome.Mountains,
+            Biome.Snow
         };
 
         var actual = Enum.GetValues<Biome>();

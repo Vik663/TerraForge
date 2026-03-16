@@ -4,5 +4,6 @@ public class Cell
 {
     public double Height { get; set; }
     public double Moisture { get; set; }
+    public double Temperature { get; set; }
     public Biome Biome { get; set; }
 }

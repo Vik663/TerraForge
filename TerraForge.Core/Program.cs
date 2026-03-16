@@ -18,6 +18,7 @@ var generator = new WorldGenerator([
     new HeightNormalizer(),
 
     new MoistureMapGenerator(settings.Seed + 1000),
+    new TemperatureMapGenerator(settings.Seed + 2000),
     new ClimateBiomeAssigner()
 ]);
 
@@ -26,3 +27,5 @@ var world = generator.Generate(settings);
 AsciiRenderer.RenderColored(world);
 
 PngRenderer.Render(world, "map.png");
+
+PngRenderer.RenderTemperatureMap(world, "temperature.png");

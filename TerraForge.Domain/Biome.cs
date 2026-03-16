@@ -9,5 +9,6 @@ public enum Biome
     Forest,
     Taiga,
     Hills,
-    Mountains
+    Mountains,
+    Snow
 }
