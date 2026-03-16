@@ -6,18 +6,18 @@ namespace TerraForge.Tests.Generation;
 
 public class ClimateBiomeAssignerTests
 {
-    private static World CreateWorld(double height, double moisture)
+    private static World CreateWorld(double height, double moisture, double temp)
     {
         var world = new World(1, 1);
         world.Cells[0, 0].Height = height;
         world.Cells[0, 0].Moisture = moisture;
-        world.Cells[0, 0].Temperature = 0.5;
+        world.Cells[0, 0].Temperature = temp;
         return world;
     }
 
-    private static Biome Assign(double h, double m)
+    private static Biome Assign(double h, double m, double temp = 0.5)
     {
-        var world = CreateWorld(h, m);
+        var world = CreateWorld(h, m, temp);
         var step = new ClimateBiomeAssigner();
         step.Apply(world, new WorldGenerationSettings());
         return world.Cells[0, 0].Biome;
@@ -54,13 +54,13 @@ public class ClimateBiomeAssignerTests
     }
 
     [Theory]
-    [InlineData(0.60, 0.0, Biome.Hills)]
-    [InlineData(0.70, 0.39, Biome.Hills)]
-    [InlineData(0.60, 0.4, Biome.Taiga)]
-    [InlineData(0.75, 0.99, Biome.Taiga)]
-    public void Assigns_HighElevation_Biomes(double h, double m, Biome expected)
+    [InlineData(0.60, 0.0, Biome.Hills, 0.5)]
+    [InlineData(0.70, 0.39, Biome.Hills, 0.5)]
+    [InlineData(0.60, 0.4, Biome.Taiga, 0.2)]
+    [InlineData(0.75, 0.99, Biome.Taiga, 0.2)]
+    public void Assigns_HighElevation_Biomes(double h, double m, Biome expected, double temp)
     {
-        Assert.Equal(expected, Assign(h, m));
+        Assert.Equal(expected, Assign(h, m, temp));
     }
 
     [Theory]
