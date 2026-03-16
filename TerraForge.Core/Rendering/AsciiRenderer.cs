@@ -40,6 +40,7 @@ public static class AsciiRenderer
             Biome.Taiga => '+',
             Biome.Hills => '^',
             Biome.Mountains => 'A',
+            Biome.Snow => ',',
             _ => '?'
         };
     }

@@ -36,6 +36,38 @@ public static class PngRenderer
         using var stream = File.OpenWrite(path);
         data.SaveTo(stream);
     }
+    
+    public static void RenderTemperatureMap(World world, string path, int scale = 4)
+    {
+        var w = world.Width;
+        var h = world.Height;
+
+        using var small = new SKBitmap(w, h);
+        using var canvasSmall = new SKCanvas(small);
+
+        for (var y = 0; y < h; y++)
+        for (var x = 0; x < w; x++)
+        {
+            var t = world.Cells[x, y].Temperature;
+
+            var r = (byte)(t * 255);
+            const byte g = 0;
+            var b = (byte)((1 - t) * 255);
+
+            canvasSmall.DrawPoint(x, y, new SKColor(r, g, b));
+        }
+
+        using var large = new SKBitmap(w * scale, h * scale);
+        using var canvasLarge = new SKCanvas(large);
+
+        canvasLarge.Scale(scale, scale);
+        canvasLarge.DrawBitmap(small, 0, 0);
+
+        using var image = SKImage.FromBitmap(large);
+        using var data = image.Encode(SKEncodedImageFormat.Png, 100);
+        using var stream = File.OpenWrite(path);
+        data.SaveTo(stream);
+    }
 
     private static SKColor ApplyHeightShading(SKColor baseColor, double height)
     {
@@ -102,7 +134,9 @@ public static class PngRenderer
             Biome.Taiga => new SKColor(0, 100, 0),
             Biome.Hills => new SKColor(120, 120, 120),
             Biome.Mountains => new SKColor(220, 220, 220),
+            Biome.Snow => SKColors.Snow,
             _ => SKColors.Magenta
         };
     }
+
 }
