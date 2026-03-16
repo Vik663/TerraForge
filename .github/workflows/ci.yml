@@ -142,7 +142,7 @@ jobs:
         </svg>" > public/coverage-badge.svg
 
     - name: Publish to GitHub Pages
-      uses: peaceiris/actions-gh-pages@4b09552702d0b65573696410d4707c765da2630b
+      uses: peaceiris/actions-gh-pages@4f9cc6602d3f66b9c108549d475ec49e8ef4d45e
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./public
@@ -194,7 +194,7 @@ jobs:
         head -n 50 SonarCoverage/OpenCover.xml || true
 
     - name: SonarCloud Scan
-      uses: SonarSource/sonarcloud-github-action@ba3875ecf642b2129de2b589510c81a8b53dbf4e
+      uses: SonarSource/sonarcloud-github-action@ffc3010689be73b8e5ae0c57ce35968afd7909e8
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       with:
